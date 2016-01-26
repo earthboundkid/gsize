@@ -27,7 +27,7 @@ func (size countWriter) String() string {
 		terabyte
 	)
 
-	format := "%.f   "
+	format := "%.f"
 	value := float32(size)
 
 	switch {
@@ -46,6 +46,7 @@ func (size countWriter) String() string {
 	}
 	return fmt.Sprintf(format, value)
 }
+
 func die(err error) {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error:", err)
@@ -59,9 +60,9 @@ func main() {
 	originalSize, err := io.Copy(gw, os.Stdin)
 	die(err)
 	die(gw.Flush())
-	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', tabwriter.AlignRight)
-	fmt.Fprintf(tw, "Original\t%s\t%[1]d\t\n", countWriter(originalSize))
+	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintf(tw, "  Original\t%s\t%[1]d\t\n", countWriter(originalSize))
 	fmt.Fprintf(tw, "Compressed\t%s\t%[1]d\t\n", compressedSize)
-	fmt.Fprintf(tw, "Ratio\t%01.2f   \t\n", float64(compressedSize)/float64(originalSize))
+	fmt.Fprintf(tw, "     Ratio\t%01.2f\t\n", float64(compressedSize)/float64(originalSize))
 	tw.Flush()
 }
