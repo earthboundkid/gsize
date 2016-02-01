@@ -59,7 +59,7 @@ func main() {
 	gw := gzip.NewWriter(&compressedSize)
 	originalSize, err := io.Copy(gw, os.Stdin)
 	die(err)
-	die(gw.Flush())
+	die(gw.Close())
 	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.AlignRight)
 	fmt.Fprintf(tw, "Original    \t%s\t\n", humanize(originalSize))
 	fmt.Fprintf(tw, "Compressed  \t%s\t\n", humanize(int64(compressedSize)))
