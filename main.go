@@ -27,24 +27,24 @@ func humanize(size int64) string {
 		terabyte
 	)
 
-	format := "%.f"
-	value := float32(size)
+	format := "%.[1]f\t"
+	value := float64(size)
 
 	switch {
 	case size >= terabyte:
-		format = "%3.1f TB"
+		format = "%3.2f\tTB\t(%d)"
 		value = value / terabyte
 	case size >= gigabyte:
-		format = "%3.1f GB"
+		format = "%3.2f\tGB\t(%d)"
 		value = value / gigabyte
 	case size >= megabyte:
-		format = "%3.1f MB"
+		format = "%3.2f\tMB\t(%d)"
 		value = value / megabyte
 	case size >= kilobyte:
-		format = "%3.1f KB"
+		format = "%3.2f\tKB\t(%d)"
 		value = value / kilobyte
 	}
-	return fmt.Sprintf(format, value)
+	return fmt.Sprintf(format, value, size)
 }
 
 func die(err error) {
@@ -60,12 +60,9 @@ func main() {
 	originalSize, err := io.Copy(gw, os.Stdin)
 	die(err)
 	die(gw.Flush())
-	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintf(tw, "  Original\t%s\t%d\t\n",
-		humanize(originalSize), originalSize)
-	fmt.Fprintf(tw, "Compressed\t%s\t%d\t\n",
-		humanize(int64(compressedSize)), compressedSize)
-	fmt.Fprintf(tw, "     Ratio\t%01.2f\t\n",
-		float64(compressedSize)/float64(originalSize))
+	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.AlignRight)
+	fmt.Fprintf(tw, "Original    \t%s\t\n", humanize(originalSize))
+	fmt.Fprintf(tw, "Compressed  \t%s\t\n", humanize(int64(compressedSize)))
+	fmt.Fprintf(tw, "Ratio       \t%01.2f\t\n", float64(compressedSize)/float64(originalSize))
 	tw.Flush()
 }
