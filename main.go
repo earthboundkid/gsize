@@ -10,7 +10,7 @@ import (
 	"text/tabwriter"
 )
 
-type countWriter int
+type countWriter int64
 
 func (size *countWriter) Write(p []byte) (n int, err error) {
 	n, err = ioutil.Discard.Write(p)
@@ -18,7 +18,7 @@ func (size *countWriter) Write(p []byte) (n int, err error) {
 	return
 }
 
-func (size countWriter) String() string {
+func humanize(size int64) string {
 	const (
 		_        = iota
 		kilobyte = 1 << (10 * iota)
@@ -61,8 +61,11 @@ func main() {
 	die(err)
 	die(gw.Flush())
 	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintf(tw, "  Original\t%s\t%[1]d\t\n", countWriter(originalSize))
-	fmt.Fprintf(tw, "Compressed\t%s\t%[1]d\t\n", compressedSize)
-	fmt.Fprintf(tw, "     Ratio\t%01.2f\t\n", float64(compressedSize)/float64(originalSize))
+	fmt.Fprintf(tw, "  Original\t%s\t%d\t\n",
+		humanize(originalSize), originalSize)
+	fmt.Fprintf(tw, "Compressed\t%s\t%d\t\n",
+		humanize(int64(compressedSize)), compressedSize)
+	fmt.Fprintf(tw, "     Ratio\t%01.2f\t\n",
+		float64(compressedSize)/float64(originalSize))
 	tw.Flush()
 }
