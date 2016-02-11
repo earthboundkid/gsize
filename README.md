@@ -3,8 +3,8 @@ Utility that tells how large a file will be after gzip compression
 
 ## Screenshots
 ```bash
-$ gsize < global.css 
-  Original  140.1 KB  143455  
-Compressed  22.3 KB   22786   
-     Ratio  0.16      
+$ cat *.js | gsize
+ Original       1.53 MB (1600539)
+ Compressed   352.21 KB  (360664)
+ Ratio          0.23
 ```
